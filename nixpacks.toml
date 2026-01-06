@@ -1,5 +1,6 @@
 [variables]
 PLAYWRIGHT_BROWSERS_PATH = "/app/playwright-browsers"
+PYTHONUNBUFFERED = "1"
 
 [phases.setup]
 nixPkgs = ["python311", "ffmpeg"]

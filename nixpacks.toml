@@ -31,4 +31,4 @@ aptPkgs = [
 cmds = ["pip install -r requirements.txt", "playwright install chromium"]
 
 [start]
-cmd = "playwright install chromium && python main.py"
+cmd = "python main.py"

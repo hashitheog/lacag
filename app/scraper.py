@@ -3,6 +3,8 @@ from playwright.async_api import async_playwright
 import config
 import re
 import time
+import os
+import subprocess
 
 class DexScreenerScraper:
     def __init__(self):
@@ -11,13 +13,29 @@ class DexScreenerScraper:
         self.history = {}
 
     async def start(self):
-        """Initializes the browser."""
+        """Initializes the browser. Self-heals if browser missing."""
+        
+        # 1. Force Local Path
+        local_browser_path = os.path.join(os.getcwd(), "pw-browsers")
+        os.environ["PLAYWRIGHT_BROWSERS_PATH"] = local_browser_path
+        
+        # 2. Check & Install if missing
+        print("Checking browser installation...")
+        
+        # BRUTE FORCE: Just run install. It's fast if already present.
+        print(f"Ensuring Chromium exists in {local_browser_path}...")
+        try:
+             subprocess.run(["playwright", "install", "chromium"], check=True)
+        except Exception as e:
+             print(f"Browser Install Warning: {e}")
+
+        # 3. Launch
         self.playwright = await async_playwright().start()
         self.browser = await self.playwright.chromium.launch(headless=config.HEADLESS)
         self.context = await self.browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
-        print("Browser launched.")
+        print("Browser launched successfully.")
 
     async def stop(self):
         if self.browser:
